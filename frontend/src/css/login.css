@@ -1,0 +1,82 @@
+.loginPage {
+    display: flex;
+    flex-direction: column;
+    background-color: #E8D5C4;
+    width: 25vw;
+    height: 50vh;
+    max-width: 50vw;
+    max-height: 50vw;
+    border-radius: 5%;
+}
+
+.loginTitle {
+    text-align: center;
+    padding: 1rem;
+    font-size: 1em;
+}
+
+.loginForm {
+    height: 100%;
+}
+
+.loginForm form {
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.loginInputs {
+
+}
+
+.loginInput input {
+    box-sizing: border-box;
+    outline: none;
+    width: 20vw;
+    font-size: 1rem;
+    max-width: 20vw;
+    padding: .5rem;
+    
+}
+
+.loginInput input:focus {
+    outline: none;
+}
+
+.loginButtons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.loginButtons a {
+    font-size: 1rem;
+    color: #3A98B9;
+    text-decoration: none;
+}
+
+.loginSubmit {
+
+
+}
+
+.loginSubmit input[type="submit"] {
+    cursor: pointer;
+    background-color: #3A98B9;
+    width: 20vw;
+    margin: .2rem;
+    padding: .5rem;
+    font-size: 1rem;
+    color: white;
+    outline: none;
+    border: none;
+    transition: ease-in 250ms;
+    
+}
+
+.loginSubmit input[type="submit"]:hover {
+    background-color: #2a7d9b;
+}
