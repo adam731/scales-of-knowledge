@@ -3,16 +3,25 @@ import { Link } from "react-router-dom";
 import "../css/login.css";
 import Header from "./Header";
 
-function Login() {
+function Signup() {
   return (
     <>
       <Header />
       <div className="loginPage">
         <div className="loginTitle">
-          <h1>Login</h1>
+          <h1>Sign Up</h1>
         </div>
         <div className="loginForm">
           <form action="">
+            <div className="loginInput">
+              <input
+                type="email"
+                name="email"
+                id="email"
+                required
+                placeholder="Email"
+              />
+            </div>
             <div className="loginInput">
               <input
                 type="text"
@@ -35,17 +44,8 @@ function Login() {
               <input type="submit" value="Submit" />
             </div>
             <div className="loginButtons">
-              <Link
-                to="/signup"
-                style={{ color: "#3A98B9", textDecoration: "none" }}
-              >
-                Sign Up
-              </Link>
-              <Link
-                to="/forgot"
-                style={{ color: "#3A98B9", textDecoration: "none" }}
-              >
-                Forgot Password
+              <Link to="/" style={{ color: "#3A98B9", textDecoration: "none" }}>
+                Back to Login
               </Link>
             </div>
           </form>
@@ -55,4 +55,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Signup;
