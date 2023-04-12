@@ -22,6 +22,7 @@ app.listen(port, () => {
   console.log(`Quiz app listening at http://localhost:${port}`);
 });
 
+// user schema
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
     password: { type: String, required: true },
@@ -29,8 +30,32 @@ const userSchema = new mongoose.Schema({
     date: { type: Date, default: Date.now }
 });
 
+// User Model
 const User = mongoose.model('User', userSchema);
 
+// Question Schema
+const questionSchema = new mongoose.Schema({
+    question: { type: String, required: true },
+    options: [{ type: String, required: true }],
+    correctAnswer: { type: String, required: true },
+  });
+
+// Question Model
+const Question = mongoose.model('Question', questionSchema, 'questions');
+
+
+// Leaderboard Schema
+const leaderboardSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    score: { type: Number, required: true },
+    date: { type: Date, default: Date.now }
+});
+
+// Leaderboard Model
+const Leaderboard = mongoose.model('Leaderboard', leaderboardSchema);
+
+// Routes
+// Register route
 app.post('/api/register', async (req, res) => {
     try {
         // Store user in database
@@ -50,19 +75,46 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
+// Login route
 app.post('/api/login', async (req, res) => {
-    // use the username and password to find the user in the database
+    try {
+      const { username, password } = req.body;
+      const user = await User.findOne({ username, password });
+      if (!user) throw new Error('Invalid username or password');
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  });
 
-});
-
+// Questions route
 app.get('/api/questions', async (req, res) => {
-    // fetch questions from database schema
+    try {
+      const questions = await Question.find();
+      res.status(200).json(questions);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
 });
 
-app.post('/api/leaderboard', async (req, res) => {
-    // post leaderboard to database schema
+// Leaderboard route post
+app.post('/api/leaderboard/', async (req, res) => {
+    try {
+      const { username, score } = req.body;
+      const leaderboard = new Leaderboard({ username, score });
+      const newLeaderboard = await leaderboard.save();
+      res.status(201).json(newLeaderboard);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
 });
 
+// Leaderboard route get
 app.get('/api/leaderboard', async (req, res) => {
-    // fetch leaderboard from database schema
+    try {
+      const leaderboard = await Leaderboard.find().sort({ score: -1 }).limit(10);
+      res.status(200).json(leaderboard);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+  }
 });
