@@ -22,49 +22,47 @@ app.listen(port, () => {
   console.log(`Quiz app listening at http://localhost:${port}`);
 });
 
-// routes for quiz app
-
-// Get quiz questions
-app.get('/api/questions', (req, res) => {
-    // Fetch questions from database
-    const questions = getQuestions();
-    res.json(questions);
+const userSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    password: { type: String, required: true },
+    email: { type: String, required: true },
+    date: { type: Date, default: Date.now }
 });
 
-// Get quiz results
-app.get('/api/results', (req, res) => {
-    // Fetch quiz results for user from database
-    const results = getQuizResults(req.query.user_id);
-    res.json(results);
+const User = mongoose.model('User', userSchema);
+
+app.post('/api/register', async (req, res) => {
+    try {
+        // Store user in database
+        // makes a user form the user schema
+        const user = new User({
+            username: req.body.username,
+            password: req.body.password,
+            email: req.body.email
+        });
+        // saves the user to the database
+        const newUser = await user.save();
+        // outputs a json file with the new user
+        res.status(201).json(newUser);
+    } catch(error) {
+        // If there is an error, return the error message
+        res.status(400).json({ message: error.message });
+    }
 });
 
-// Submit quiz answers
-app.post('/api/submit', (req, res) => {
-    // Calculate user's score based on their answers
-    const score = calculateScore(req.body.answers);
-    // Store quiz results in database
-    storeQuizResults(req.body.user_id, score);
-    res.json({ score });
+app.post('/api/login', async (req, res) => {
+    // use the username and password to find the user in the database
+
 });
 
+app.get('/api/questions', async (req, res) => {
+    // fetch questions from database schema
+});
 
-// Helper functions
-function getQuizAttempts(user_id) {
-  // Get number of quiz attempts for user from database
-}
+app.post('/api/leaderboard', async (req, res) => {
+    // post leaderboard to database schema
+});
 
-function getQuestions() {
-  // Fetch questions from database
-}
-
-function getQuizResults(user_id) {
-  // Fetch quiz results for user from database
-}
-
-function calculateScore(answers) {
-  // Calculate user's score based on their answers
-}
-
-function storeQuizResults(user_id, score) {
-  // Store quiz results in database
-} 
+app.get('/api/leaderboard', async (req, res) => {
+    // fetch leaderboard from database schema
+});
