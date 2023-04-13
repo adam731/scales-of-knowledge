@@ -1,6 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
+import bcrypt from 'bcrypt'
 
 const app = express();
 const port = 3001;
@@ -58,12 +59,13 @@ const Leaderboard = mongoose.model('Leaderboard', leaderboardSchema);
 // Register route
 app.post('/api/register', async (req, res) => {
     try {
+        const saltRounds = 10;
         // Store user in database
         // makes a user form the user schema
         const user = new User({
             username: req.body.username,
-            password: req.body.password,
-            email: req.body.email
+            email: req.body.email,
+            password: await bcrypt.hash(req.body.password, saltRounds)
         });
         // saves the user to the database
         const newUser = await user.save();
@@ -79,13 +81,15 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
     try {
       const { username, password } = req.body;
-      const user = await User.findOne({ username, password });
+      const user = await User.findOne({ username });
       if (!user) throw new Error('Invalid username or password');
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      if (!isPasswordCorrect) throw new Error('Invalid username or password');
       res.status(200).json(user);
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
-  });
+});
 
 // Questions route
 app.get('/api/questions', async (req, res) => {
@@ -95,19 +99,7 @@ app.get('/api/questions', async (req, res) => {
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
-});
-
-// Leaderboard route post
-app.post('/api/leaderboard/', async (req, res) => {
-    try {
-      const { username, score } = req.body;
-      const leaderboard = new Leaderboard({ username, score });
-      const newLeaderboard = await leaderboard.save();
-      res.status(201).json(newLeaderboard);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-});
+}); 
 
 // Leaderboard route get
 app.get('/api/leaderboard', async (req, res) => {
