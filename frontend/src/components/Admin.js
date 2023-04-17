@@ -25,11 +25,15 @@ function Admin() {
         <Modal.Body style={{ textAlign: "center" }}>
           <h1>Welcome Admin</h1>
           <h1>Add Questions</h1>
-          <Form action="" encType="multipart/form-data">
+          <Form
+            method="POST"
+            action="/api/upload-questions"
+            encType="multipart/form-data"
+          >
             <Form.Group className="mb-3" controlId="formFile">
               <Form.Control
                 type="file"
-                name="jsonFile"
+                name="questionsData"
                 placeholder="jsonFile"
               />
             </Form.Group>
