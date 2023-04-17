@@ -24,3 +24,10 @@
     right: 20px;
     margin-top: 10px;
 }
+
+.triviaButton {
+    cursor: pointer;
+    text-decoration: none;
+    color: #3a98b9;
+    font-size: 2rem;
+}
