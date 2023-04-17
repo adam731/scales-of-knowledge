@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { leaderboardFetch } from "../apiCalls/fetch.js";
-import "../css/leaderboard.css";
-import Header from "./Header.js";
 import Logout from "./Logout.js";
+import { Container, Modal, Button, Table, Alert } from "react-bootstrap";
 
 function Leaderboard() {
   const [leaderboardData, setLeaderboardData] = useState([]);
@@ -11,6 +10,9 @@ function Leaderboard() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   useEffect(() => {
+    if (user?.username === "admin") {
+      navigate("/admin");
+    }
     if (!user) {
       // Redirect to the login page if the user is not logged in
       navigate("/");
@@ -23,46 +25,48 @@ function Leaderboard() {
     }
     fetchData();
   }, []);
-  console.log(leaderboardData.globalStats);
+
+  const onSwitchPage = () => {
+    navigate("/dashboard");
+  };
 
   return (
-    <div className="leaderboardPage">
-      <Header />
-      <Logout />
-      <div className="leaderboard">
-        {leaderboardData.length > 0 && (
-          <div className="leaderTable">
-            <table className="">
-              <tr>
-                <th>Rank</th>
-                <th>User</th>
-                <th>Total Score</th>
-              </tr>
-              {leaderboardData.map((user, index) => (
+    <Container>
+      <Modal show={true} centered backdrop={false}>
+        <Modal.Header>
+          <Modal.Title>Scales of Knowledge</Modal.Title>
+          <Logout />
+        </Modal.Header>
+        <Modal.Body>
+          <Alert variant="primary">Your total score is: {userTotalScore}</Alert>
+          {leaderboardData.length > 0 && (
+            <Table>
+              <thead>
                 <tr>
-                  <td>{index + 1}.</td>
-                  <td>{user.username}</td>
-                  <td>{user.score}</td>
+                  <th>Rank</th>
+                  <th>User</th>
+                  <th>Total Score</th>
                 </tr>
-              ))}
-            </table>
-          </div>
-        )}
-        <div>
-          <h1>Your total score: {userTotalScore}</h1>
-        </div>
-        <Link
-          to="/dashboard"
-          style={{
-            color: "#3A98B9",
-            textDecoration: "none",
-            fontSize: "1.5rem",
-          }}
-        >
-          Back
-        </Link>
-      </div>
-    </div>
+              </thead>
+              <tbody>
+                {leaderboardData.map((user, index) => (
+                  <tr key={user._id}>
+                    <td>{index + 1}.</td>
+                    <td>{user.username}</td>
+                    <td>{user.score}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={onSwitchPage}>
+            Back
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </Container>
   );
 }
 

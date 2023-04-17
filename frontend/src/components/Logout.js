@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 function Logout() {
   const navigate = useNavigate();
@@ -7,13 +8,7 @@ function Logout() {
     localStorage.removeItem("user");
     navigate("/");
   };
-  return (
-    <div className="">
-      <a className="logout" onClick={onLogout}>
-        Logout
-      </a>
-    </div>
-  );
+  return <Button onClick={onLogout}>Logout</Button>;
 }
 
 export default Logout;

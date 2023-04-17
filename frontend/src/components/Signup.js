@@ -1,68 +1,62 @@
 import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "../css/login.css";
-import logo from "../images/logo.png";
+import { useNavigate } from "react-router-dom";
+import { Container, Modal, Button, Form, Alert } from "react-bootstrap";
 
 function Signup() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
+  const onSwitchPage = () => {
+    navigate("/");
+  };
+
   useEffect(() => {
+    if (user?.username === "admin") {
+      navigate("/admin");
+    }
     if (user) {
       navigate("/dashboard");
     }
   });
   return (
-    <>
-      <div className="header">
-        <h1>Scales of Knowledge</h1>
-        <img src={logo} alt="" />
-      </div>
-      <div className="loginPage">
-        <div className="loginTitle">
-          <h1>Sign Up</h1>
-        </div>
-        <div className="loginForm">
-          <form method="POST" action="/api/register">
-            <div className="loginInput">
-              <input
-                type="email"
-                name="email"
-                id="email"
-                required
-                placeholder="Email"
-              />
-            </div>
-            <div className="loginInput">
-              <input
+    <Container>
+      <Modal show={true} centered backdrop={false}>
+        <Modal.Header>
+          <Modal.Title>Scales of Knowledge</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form method="POST" action="/api/register">
+            <Form.Group className="mb-3" controlId="formEmail">
+              <Form.Control type="email" name="email" placeholder="Email" />
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formUsername">
+              <Form.Control
                 type="text"
                 name="username"
-                id="username"
-                required
                 placeholder="Username"
               />
-            </div>
-            <div className="loginInput">
-              <input
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formPassword">
+              <Form.Control
                 type="password"
                 name="password"
-                id="password"
-                required
                 placeholder="Password"
               />
-            </div>
-            <div className="loginSubmit">
-              <input type="submit" value="Submit" />
-            </div>
-            <div className="loginButtons">
-              <Link to="/" style={{ color: "#3A98B9", textDecoration: "none" }}>
-                Back to Login
-              </Link>
-            </div>
-          </form>
-        </div>
-      </div>
-    </>
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={onSwitchPage} variant="primary">
+            Back
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </Container>
   );
 }
 

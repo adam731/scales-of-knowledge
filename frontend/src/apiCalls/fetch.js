@@ -10,11 +10,10 @@ export const loginFetch = async (username, password) => {
   if (response.ok) {
     if (data.success === true) {
       localStorage.setItem("user", JSON.stringify(data.user));
-      window.location.href = "/dashboard";
-    } else {
-      return true;
+      return false;
     }
   }
+  return true;
 };
 
 export const questionsFetch = async (username, password) => {

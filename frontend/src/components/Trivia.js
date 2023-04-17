@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import "../css/trivia.css";
-import Header from "./Header.js";
+import { useNavigate } from "react-router-dom";
 import { leaderboardPatch, questionsFetch } from "../apiCalls/fetch.js";
+import { Container, Modal, Button } from "react-bootstrap";
 
 function Trivia() {
   const navigate = useNavigate();
@@ -24,7 +23,14 @@ function Trivia() {
     }
   };
 
+  const onSwitchPage = () => {
+    navigate("/dashboard");
+  };
+
   useEffect(() => {
+    if (user?.username === "admin") {
+      navigate("/admin");
+    }
     if (!user) {
       // Redirect to the login page if the user is not logged in
       navigate("/");
@@ -40,16 +46,20 @@ function Trivia() {
     fetchData();
   }, [score, user.username, questionIndex]);
   return (
-    <div className="triviaPage">
-      <Header />
-      <div className="trivia">
-        <div className="questionaire">
+    <Container>
+      <Modal show={true} centered backdrop={false}>
+        <Modal.Header>
+          <Modal.Title>Scales of Knowledge</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ textAlign: "center" }}>
           {questionIndex === 5 ? (
-            <h1>See you tomorrow!</h1>
+            <h1></h1>
           ) : (
             questionsData.length > 0 && (
               <div className="questionTitle">
-                <h1>{questionsData[questionIndex].question}</h1>
+                <h1>
+                  {questionIndex + 1}. {questionsData[questionIndex].question}
+                </h1>
               </div>
             )
           )}
@@ -57,33 +67,40 @@ function Trivia() {
             <div className="finished">
               <h1>You got {correct} / 5 correct!</h1>
               <h1>Your score is {score}</h1>
-              <Link
-                to="/dashboard"
-                style={{
-                  color: "#3A98B9",
-                  textDecoration: "none",
-                  fontSize: "1.5rem",
-                }}
-              >
-                Back
-              </Link>
             </div>
           ) : (
             questionsData.length > 0 && (
-              <div className="question">
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  gap: "1rem",
+                }}
+              >
                 {questionsData[questionIndex].options.map((item, index) => (
-                  <div className="buttons">
-                    <button onClick={() => handleSelect(item, index)}>
-                      {item}
-                    </button>
-                  </div>
+                  <Button
+                    variant="primary"
+                    onClick={() => handleSelect(item, index)}
+                    key={item}
+                  >
+                    {item}
+                  </Button>
                 ))}
               </div>
             )
           )}
-        </div>
-      </div>
-    </div>
+        </Modal.Body>
+        <Modal.Footer>
+          {questionIndex === 5 && (
+            <Button variant="primary" onClick={onSwitchPage}>
+              Back
+            </Button>
+          )}
+        </Modal.Footer>
+      </Modal>
+    </Container>
   );
 }
 

@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import "../css/dashboard.css";
+import { useNavigate } from "react-router-dom";
 import Logout from "./Logout.js";
-import Header from "./Header.js";
+import { Container, Modal, Button } from "react-bootstrap";
 
 function Dashboard() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
-  const localStorageKey = `lastPlayed_${user._id}`;
-  const [canPlay, setCanPlay] = useState(true);
+  const localStorageKey = `lastPlayed_${user?._id}`;
+  const [cantPlay, setCantPlay] = useState(false);
   useEffect(() => {
+    if (user?.username === "admin") {
+      navigate("/admin");
+    }
     if (!user) {
       // Redirect to the login page if the user is not logged in
       navigate("/");
@@ -22,39 +24,51 @@ function Dashboard() {
       const diff = now.getTime() - lastPlayedDate.getTime();
       const diffInDays = diff / (1000 * 60 * 60 * 24);
       if (diffInDays < 1) {
-        setCanPlay(false);
+        setCantPlay(true);
       }
     }
   });
 
   function handlePlay() {
     localStorage.setItem(localStorageKey, new Date().toISOString());
-    setCanPlay(false);
+    setCantPlay(false);
     navigate("/trivia");
   }
 
+  const onSwitchPage = () => {
+    navigate("/leaderboard");
+  };
+
   return (
-    <div className="dashboardPage">
-      <Header />
-      <Logout />
-      {canPlay ? (
-        <div className="play">
-          <a className="triviaButton" onClick={() => handlePlay()}>
-            Play Game
-          </a>
-        </div>
-      ) : (
-        <h1>You have already played today.</h1>
-      )}
-      <div className="leaderboard">
-        <Link
-          to="/leaderboard"
-          style={{ color: "#3A98B9", textDecoration: "none", fontSize: "2rem" }}
+    <Container>
+      <Modal show={true} centered backdrop={false}>
+        <Modal.Header>
+          <Modal.Title>Scales of Knowledge</Modal.Title>
+          <Logout />
+        </Modal.Header>
+        <Modal.Body
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            gap: ".5rem",
+          }}
         >
-          Leaderboard
-        </Link>
-      </div>
-    </div>
+          <Button
+            onClick={() => handlePlay()}
+            variant="primary"
+            disabled={cantPlay}
+          >
+            Play Game
+          </Button>
+          <Button onClick={onSwitchPage} variant="primary">
+            Leaderboard
+          </Button>
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
+    </Container>
   );
 }
 
