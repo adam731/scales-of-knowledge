@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import path from "path";
 import { fileURLToPath } from "url";
 import cron from "node-cron";
+import multer from "multer";
 
 const app = express();
 const port = 3001;
@@ -26,6 +27,8 @@ try {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "./build")));
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 app.get(/^(?!\/api).+/, (req, res) => {
   res.sendFile(path.join(__dirname, "./build/index.html"));
@@ -52,6 +55,17 @@ const questionSchema = new mongoose.Schema({
 // Question Model
 const Question = mongoose.model("Question", questionSchema, "questions");
 
+// Insert Question Schema
+const insertQuestionSchema = new mongoose.Schema({
+  questions: { type: Array, required: true },
+});
+
+const AddQuestion = mongoose.model(
+  "AddQuestion",
+  insertQuestionSchema,
+  "questions"
+);
+
 // Leaderboard Schema
 const leaderboardSchema = new mongoose.Schema({
   username: { type: String, required: true },
@@ -64,10 +78,36 @@ const Leaderboard = mongoose.model("Leaderboard", leaderboardSchema);
 
 // Routes
 
-cron.schedule("* * * * *", function () {
-  console.log("---------------------");
-  console.log("running a task every minute");
+cron.schedule("0 0 * * *", async function () {
+  try {
+    const questions = await Question.find();
+    if (questions.length > 0) {
+      // Delete the first set of questions
+      const firstQuestionSet = questions[0];
+      await Question.findByIdAndDelete(firstQuestionSet._id);
+      console.log(`Deleted questions with ID ${firstQuestionSet._id}`);
+    }
+  } catch (error) {
+    console.error(error);
+  }
 });
+
+app.post(
+  "/api/upload-questions",
+  upload.single("questionsData"),
+  async (req, res) => {
+    try {
+      // Get the uploaded JSON file
+      const questionsData = JSON.parse(req.file.buffer.toString());
+      await AddQuestion.insertMany(questionsData);
+      // Send a success response
+      return res.redirect("/admin");
+    } catch (error) {
+      // Send an error response
+      res.status(400).json({ message: error.message });
+    }
+  }
+);
 
 // Register route
 app.post("/api/register", async (req, res) => {
@@ -75,6 +115,14 @@ app.post("/api/register", async (req, res) => {
     const saltRounds = 10;
     // Store user in database
     // makes a user form the user schema
+    const existingUser = await User.findOne({
+      $or: [{ email: req.body.email }, { username: req.body.username }],
+    });
+    if (existingUser) {
+      return res.json({
+        success: false,
+      });
+    }
     const user = new User({
       username: req.body.username,
       email: req.body.email,
@@ -85,12 +133,11 @@ app.post("/api/register", async (req, res) => {
       username: req.body.username,
       score: 0,
     });
-
     // saves the user to the database
     const newUser = await user.save();
     const newLeaderboardUser = await leaderboardUser.save();
     // outputs a json file with the new user
-    res.redirect("/");
+    return res.json({ success: true });
   } catch (error) {
     // If there is an error, return the error message
     res.status(400).json({ message: error.message });

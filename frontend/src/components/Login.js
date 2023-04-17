@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { loginFetch } from "../apiCalls/fetch.js";
-import "../css/login.css";
-import logo from "../images/logo.png";
+import { Container, Modal, Button, Form, Alert } from "react-bootstrap";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -11,7 +10,14 @@ function Login() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
+  const onSwitchPage = () => {
+    navigate("/signup");
+  };
+
   useEffect(() => {
+    if (user?.username === "admin") {
+      navigate("/admin");
+    }
     if (user) {
       navigate("/dashboard");
     }
@@ -27,57 +33,56 @@ function Login() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setError(loginFetch(username, password));
+    const newError = await loginFetch(username, password);
+    if (newError !== true) {
+      navigate("/dashboard");
+    }
+    setError(newError);
   };
 
   return (
-    <>
-      <div className="header">
-        <h1>Scales of Knowledge</h1>
-        <img src={logo} alt="" />
-      </div>
-      <div className="loginPage">
-        <div className="loginTitle">
-          <h1>Login</h1>
-        </div>
-        <div className="loginForm">
-          {error && <h1 className="error">Username or Password is invalid.</h1>}
-          <form onSubmit={onSubmit}>
-            <div className="loginInput">
-              <input
+    <Container>
+      <Modal show={true} centered backdrop={false}>
+        <Modal.Header>
+          <Modal.Title>Scales of Knowledge</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={onSubmit}>
+            {error && (
+              <Alert variant="danger">
+                <Alert.Heading>Error:</Alert.Heading>
+                <p>Username or Password is incorrect.</p>
+              </Alert>
+            )}
+            <Form.Group className="mb-3" controlId="formUsername">
+              <Form.Control
                 type="text"
                 name="username"
-                id="username"
-                required
                 placeholder="Username"
                 onChange={(e) => handleChange("username", e.target.value)}
               />
-            </div>
-            <div className="loginInput">
-              <input
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formPassword">
+              <Form.Control
                 type="password"
                 name="password"
-                id="password"
-                required
                 placeholder="Password"
                 onChange={(e) => handleChange("password", e.target.value)}
               />
-            </div>
-            <div className="loginSubmit">
-              <input type="submit" value="Submit" />
-            </div>
-            <div className="loginButtons">
-              <Link
-                to="/signup"
-                style={{ color: "#3A98B9", textDecoration: "none" }}
-              >
-                Sign Up
-              </Link>
-            </div>
-          </form>
-        </div>
-      </div>
-    </>
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={onSwitchPage} variant="primary">
+            Sign Up
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </Container>
   );
 }
 

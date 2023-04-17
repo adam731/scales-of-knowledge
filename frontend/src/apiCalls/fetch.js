@@ -10,11 +10,27 @@ export const loginFetch = async (username, password) => {
   if (response.ok) {
     if (data.success === true) {
       localStorage.setItem("user", JSON.stringify(data.user));
-      window.location.href = "/dashboard";
-    } else {
-      return true;
+      return false;
     }
   }
+  return true;
+};
+
+export const registerFetch = async (email, username, password) => {
+  const response = await fetch("/api/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, username, password }),
+  });
+  const data = await response.json();
+  if (response.ok) {
+    if (data.success === true) {
+      return false;
+    }
+  }
+  return true;
 };
 
 export const questionsFetch = async (username, password) => {
