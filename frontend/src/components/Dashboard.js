@@ -1,19 +1,24 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../css/dashboard.css";
-import logo from "../images/logo.png";
+import Logout from "./Logout.js";
+import Header from "./Header.js";
 
 function Dashboard() {
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {
+    if (!user) {
+      // Redirect to the login page if the user is not logged in
+      navigate("/");
+    }
+  });
+
   return (
     <div className="dashboardPage">
-      <div className="logo">
-        <img src={logo} alt="" />
-      </div>
-      <div className="">
-        <Link to="/" className="logout">
-          Logout
-        </Link>
-      </div>
+      <h1>{user && user.username}</h1>
+      <Header />
+      <Logout />
       <div className="play">
         <Link to="/trivia" className="triviaButton">
           Play Game

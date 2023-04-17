@@ -4,8 +4,7 @@ import "../css/header.css";
 
 function Header() {
   return (
-    <div className="header">
-      <h1>Scales of Knowledge</h1>
+    <div className="game_header">
       <img src={logo} alt="" />
     </div>
   );

@@ -1,4 +1,4 @@
-.dashboardPage {
+.leaderboardPage {
     background-color: #e8d5c4;
     width: 50vw;
     height: 62vh;
@@ -12,6 +12,14 @@
     justify-content: flex-start;
     padding-top: 20px;
     position: relative;
+}
+
+.leaderboardPage img {
+    max-width: 100%;
+    display: block;
+    width: 8vw;
+    height: 10vh;
+    margin-bottom: 20px;
 }
 
 .logout {

@@ -1,12 +1,23 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "../css/login.css";
-import Header from "./Header";
+import logo from "../images/logo.png";
 
 function Forgot() {
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  });
   return (
     <>
-      <Header />
+      <div className="header">
+        <h1>Scales of Knowledge</h1>
+        <img src={logo} alt="" />
+      </div>
       <div className="loginPage">
         <div className="loginTitle">
           <h1>Forgot Password</h1>
