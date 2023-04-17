@@ -32,3 +32,43 @@
     right: 20px;
     margin-top: 10px;
 }
+
+.question {
+    display: flex;
+    margin: 0px 1rem 0px 1rem;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.buttons button {
+    background-color: #3a98b9;
+    text-decoration: none;
+    color: white;
+    border: none;
+    padding: .5rem;
+    font-size: 1.2rem;
+    transition: ease-in 250ms;
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    
+}
+
+.buttons button:hover {
+    background-color: #2a7d9b;
+
+}
+
+.finished {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.questionTitle {
+    font-size: 1rem;
+    padding: 1rem;
+}
+
+.questionaire {
+    text-align: center;
+}

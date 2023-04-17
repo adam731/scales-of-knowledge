@@ -73,12 +73,6 @@ function Login() {
               >
                 Sign Up
               </Link>
-              <Link
-                to="/forgot"
-                style={{ color: "#3A98B9", textDecoration: "none" }}
-              >
-                Forgot Password
-              </Link>
             </div>
           </form>
         </div>

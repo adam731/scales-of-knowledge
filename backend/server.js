@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import path from "path";
 import { fileURLToPath } from "url";
+import cron from "node-cron";
 
 const app = express();
 const port = 3001;
@@ -63,6 +64,11 @@ const Leaderboard = mongoose.model("Leaderboard", leaderboardSchema);
 
 // Routes
 
+cron.schedule("* * * * *", function () {
+  console.log("---------------------");
+  console.log("running a task every minute");
+});
+
 // Register route
 app.post("/api/register", async (req, res) => {
   try {
@@ -74,10 +80,17 @@ app.post("/api/register", async (req, res) => {
       email: req.body.email,
       password: await bcrypt.hash(req.body.password, saltRounds),
     });
+
+    const leaderboardUser = new Leaderboard({
+      username: req.body.username,
+      score: 0,
+    });
+
     // saves the user to the database
     const newUser = await user.save();
+    const newLeaderboardUser = await leaderboardUser.save();
     // outputs a json file with the new user
-    res.status(201).json(newUser);
+    res.redirect("/");
   } catch (error) {
     // If there is an error, return the error message
     res.status(400).json({ message: error.message });
@@ -109,10 +122,33 @@ app.get("/api/questions", async (req, res) => {
 });
 
 // Leaderboard route get
-app.get("/api/leaderboard", async (req, res) => {
+app.get("/api/leaderboard/:username", async (req, res) => {
+  const username = req.params.username;
   try {
-    const leaderboard = await Leaderboard.find().sort({ score: -1 }).limit(10);
-    res.status(200).json(leaderboard);
+    const user = await Leaderboard.findOne({ username });
+    const leaderboard = await Leaderboard.find().sort({ score: -1 }).limit(5);
+    res.status(200).json({ globalStats: leaderboard, userStats: user.score });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Leaderboard route patch
+app.patch("/api/leaderboard/:username", async (req, res) => {
+  const username = req.params.username;
+  const update = req.body;
+  try {
+    const userData = await Leaderboard.findOne({ username });
+    const currentScore = userData.score;
+    const newScore = currentScore + update.score;
+    const updatedStats = await Leaderboard.findByIdAndUpdate(
+      userData._id,
+      { score: newScore },
+      {
+        new: true,
+      }
+    );
+    res.status(200).json(updatedStats);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

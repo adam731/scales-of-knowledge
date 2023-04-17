@@ -14,6 +14,34 @@
     position: relative;
 }
 
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.leaderTable table {
+    border-collapse: collapse;
+    width: 100%;
+    background-color: #EEEEEE
+}
+
+.leaderTable td,th {
+    border: 1px solid black;
+    text-align: left;
+    padding: 8px;
+}
+
+.leaderTable tr:nth-child(even) {
+    background-color: #3a98b9;
+}
+
+tr:nth-child(odd) {
+    background-color: #EEEEEE;
+}
+
 .leaderboardPage img {
     max-width: 100%;
     display: block;

@@ -29,3 +29,35 @@ export const questionsFetch = async (username, password) => {
     return data;
   }
 };
+
+export const leaderboardPatch = async (username, score) => {
+  fetch(`/api/leaderboard/${username}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(score),
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((updatedStats) => {
+      console.log("Leaderboard record updated:", updatedStats);
+    })
+    .catch((error) => {
+      console.error("Error updating leaderboard record:", error);
+    });
+};
+
+export const leaderboardFetch = async (username) => {
+  const response = await fetch(`/api/leaderboard/${username}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const data = await response.json();
+  if (response.ok) {
+    return data;
+  }
+};
